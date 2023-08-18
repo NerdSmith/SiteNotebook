@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
+    'djoser',
 
     # local
     "user_auth",
