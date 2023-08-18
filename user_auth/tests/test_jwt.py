@@ -10,15 +10,6 @@ REFRESH_TOKEN_URL = reverse('token_refresh')
 LOGOUT_URL = reverse('token_blacklist')
 
 
-# @pytest.mark.django_db
-# def test_login(api_client, user, email, password):
-#     r = api_client.post(LOGIN_URL, {'email': email, 'password': password})
-#     body = r.json()
-#     if 'access' in body:
-#         api_client.credentials(
-#             HTTP_AUTHORIZATION='Bearer %s' % body['access'])
-#     return r.status_code, body
-
 @pytest.mark.django_db
 def test_logout_response_200(user, api_client, login):
     _, body = login
