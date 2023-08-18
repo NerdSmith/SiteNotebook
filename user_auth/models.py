@@ -1,5 +1,6 @@
 from django.contrib import auth
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils import timezone
@@ -14,7 +15,7 @@ class UserManager(BaseUserManager["User"]):
             raise ValueError('Users require an email field')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        user.password = make_password(password)
         user.save(using=self._db)
         return user
 
