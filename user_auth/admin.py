@@ -7,6 +7,5 @@ admin.site.unregister(Group)
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin[User]):
     pass
-

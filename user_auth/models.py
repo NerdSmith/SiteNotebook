@@ -6,10 +6,10 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
-class UserManager(BaseUserManager):
+class UserManager(BaseUserManager["User"]):
     use_in_migrations = True
 
-    def _create_user(self, email, password, **extra_fields):
+    def _create_user(self, email, password, **extra_fields) -> "User":
         if not email:
             raise ValueError('Users require an email field')
         email = self.normalize_email(email)
@@ -96,3 +96,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return f"User -> {self.email} -> {self.last_name} {self.first_name} {self.patronymic}"
+
