@@ -23,7 +23,7 @@ def password():
 
 @pytest.fixture
 def user(email, password):
-    User.objects.create_user(email, password)
+    return User.objects.create_user(email, password)
 
 
 @pytest.fixture
@@ -34,3 +34,20 @@ def login(db, api_client, user, email, password):
         api_client.credentials(
             HTTP_AUTHORIZATION='Bearer %s' % body['access'])
     return r.status_code, body
+
+
+@pytest.fixture
+def user_payload():
+    return {
+            "password": "1029qpwo",
+            "first_name": "test",
+            "last_name": "test",
+            "patronymic": "test",
+            "email": "testtest@gmail.com"
+        }
+
+
+@pytest.fixture
+def user_client(api_client, user):
+    print(api_client.force_authenticate(user))
+    return api_client
