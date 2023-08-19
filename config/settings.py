@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     # local
     "user_auth",
+    "bookmarks",
 ]
 
 MIDDLEWARE = [
