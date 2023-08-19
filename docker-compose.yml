@@ -11,7 +11,7 @@ services:
     expose:
       - 4000
     env_file:
-      - ./.env
+      - .env
     depends_on:
       - db
   db:
@@ -21,7 +21,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.db
+      - .env.db
   nginx:
     build: ./nginx
     volumes:
