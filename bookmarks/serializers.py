@@ -14,3 +14,19 @@ class BookmarkSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("owner", "link_type", "link")
 
+
+class BookmarkCreateSerializer(serializers.ModelSerializer):
+    class Meta(BookmarkSerializer.Meta):
+        read_only_fields = []
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = "__all__"
+        read_only_fields = ("owner", "bookmarks")
+
+
+class CollectionCreateSerializer(CollectionSerializer):
+    class Meta(CollectionSerializer.Meta):
+        read_only_fields = ("bookmarks", )

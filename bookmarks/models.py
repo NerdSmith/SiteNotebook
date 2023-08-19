@@ -12,7 +12,7 @@ class Bookmark(models.Model):
     owner = models.ForeignKey(User, related_name="user_bookmarks", on_delete=models.CASCADE, null=False, blank=False)
     title = models.CharField(_('Title'), max_length=100)
     description = models.CharField(_('Description'), max_length=500)
-    link = models.URLField(_("Link"), max_length=2048)
+    link = models.URLField(_("Link"), max_length=2048, null=False, blank=False)
     link_type = models.ForeignKey(LinkType, on_delete=models.SET_DEFAULT, default="website", null=False, blank=False)
     image = models.URLField(_("Image"), max_length=2048, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
