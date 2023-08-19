@@ -5,6 +5,7 @@ from user_auth.models import User
 
 LOGIN_URL = reverse('token_obtain_pair')
 
+
 @pytest.fixture
 def api_client():
     from rest_framework.test import APIClient
@@ -39,12 +40,12 @@ def login(db, api_client, user, email, password):
 @pytest.fixture
 def user_payload():
     return {
-            "password": "1029qpwo",
-            "first_name": "test",
-            "last_name": "test",
-            "patronymic": "test",
-            "email": "testtest@gmail.com"
-        }
+        "password": "1029qpwo",
+        "first_name": "test",
+        "last_name": "test",
+        "patronymic": "test",
+        "email": "testtest@gmail.com"
+    }
 
 
 @pytest.fixture

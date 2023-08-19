@@ -1,12 +1,12 @@
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from bookmarks.business.OPGInfoExtractor import OPGInfoExtractor
+from bookmarks.business.OGPInfoExtractor import OGPInfoExtractor
 from bookmarks.models import Bookmark, LinkType, Collection
 from bookmarks.permissions import IsOwnerOrAdmin
 from bookmarks.serializers import BookmarkSerializer, BookmarkUrlSerializer, CollectionSerializer, \
@@ -26,7 +26,7 @@ class BookmarkViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        ogp_extractor = OPGInfoExtractor(request.data.get("target_url"))
+        ogp_extractor: OGPInfoExtractor = OGPInfoExtractor(request.data.get("target_url"))
         ogp_extractor.extract()
         info = ogp_extractor.info()
 
@@ -55,7 +55,7 @@ class BookmarkViewSet(ModelViewSet):
         headers = self.get_success_headers(bookmark_serializer.data)
         return Response(bookmark_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet["Bookmark"]:
         user = self.request.user
         queryset = super().get_queryset()
         if self.action == "list" and not user.is_staff:

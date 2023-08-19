@@ -19,7 +19,7 @@ class UserManager(BaseUserManager["User"]):
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields) -> "User":
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, **extra_fields)
@@ -100,4 +100,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"User -> {self.email} -> {self.last_name} {self.first_name} {self.patronymic}"
-

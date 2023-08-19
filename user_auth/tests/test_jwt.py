@@ -1,5 +1,3 @@
-from functools import partial
-
 import pytest
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -34,7 +32,6 @@ def test_logout_with_bad_refresh_token_response_400(user, api_client, login):
 @pytest.mark.django_db
 def test_logout_refresh_token_in_blacklist(user, api_client, login):
     _, body = login
-    r = api_client.post(LOGOUT_URL, body)
+    api_client.post(LOGOUT_URL, body)
     with pytest.raises(TokenError):
         RefreshToken(body['refresh'])
-

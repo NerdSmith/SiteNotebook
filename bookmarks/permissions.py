@@ -7,7 +7,7 @@ class IsOwnerOrAdmin(IsAuthenticated):
         owner = None
         try:
             owner = obj.owner
-        except AttributeError as ae:
+        except AttributeError:
             owner = None
         finally:
             return user.is_staff or (owner and owner.pk == user.pk)
