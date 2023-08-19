@@ -13,10 +13,16 @@ class Bookmark(models.Model):
     title = models.CharField(_('Title'), max_length=100)
     description = models.CharField(_('Description'), max_length=500)
     link = models.URLField(_("Link"), max_length=2048)
-    link_type = models.OneToOneField(LinkType, on_delete=models.SET_DEFAULT, default="website")
+    link_type = models.ForeignKey(LinkType, on_delete=models.SET_DEFAULT, default="website", null=False, blank=False)
     image = models.URLField(_("Image"), max_length=2048, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Bookmark -> {self.link} -> {self.title} CRT: {self.created_at} MOD:{self.modified_at}"
+
+    class Meta:
+        unique_together = [("owner", "link")]
 
 
 class Collection(models.Model):
