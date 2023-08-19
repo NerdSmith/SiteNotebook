@@ -39,3 +39,8 @@ class Collection(models.Model):
     def add_bookmark(self, bookmark):
         self.add_bookmarks([bookmark])
 
+    def remove_bookmarks(self, bookmarks):
+        self.bookmarks.remove(*bookmarks)
+
+    def remove_bookmark(self, bookmark):
+        self.remove_bookmarks([bookmark])

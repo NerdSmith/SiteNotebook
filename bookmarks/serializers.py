@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from bookmarks.models import Bookmark, Collection
 
@@ -29,4 +30,24 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 class CollectionCreateSerializer(CollectionSerializer):
     class Meta(CollectionSerializer.Meta):
-        read_only_fields = ("bookmarks", )
+        read_only_fields = ("bookmarks",)
+
+
+class PrimaryKeyRelatedOwnerField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        user = self.context['request'].user
+        queryset = super().get_queryset()
+        if not user.is_staff:
+            queryset = queryset.filter(owner=user.pk)
+        return queryset
+
+
+class BookmarkToCollectionSerializer(serializers.Serializer):
+    bookmarks = PrimaryKeyRelatedOwnerField(
+        required=True,
+        many=True,
+        queryset=Bookmark.objects.all(),
+        source='authors_set'
+    )
+
+

@@ -1,6 +1,7 @@
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, mixins, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -9,7 +10,7 @@ from bookmarks.business.OPGInfoExtractor import OPGInfoExtractor
 from bookmarks.models import Bookmark, LinkType, Collection
 from bookmarks.permissions import IsOwnerOrAdmin
 from bookmarks.serializers import BookmarkSerializer, BookmarkUrlSerializer, CollectionSerializer, \
-    BookmarkCreateSerializer, CollectionCreateSerializer
+    BookmarkCreateSerializer, CollectionCreateSerializer, BookmarkToCollectionSerializer
 
 
 class BookmarkViewSet(ModelViewSet):
@@ -100,4 +101,34 @@ class CollectionViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             self.serializer_class = CollectionCreateSerializer
+        elif self.action in ["add_bookmarks", "remove_bookmarks"]:
+            self.serializer_class = BookmarkToCollectionSerializer
         return super().get_serializer_class()
+
+    @extend_schema(responses={
+        status.HTTP_200_OK: CollectionSerializer,
+    })
+    @action(["patch"], detail=True)
+    def add_bookmarks(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        collection = self.get_object()
+        collection.add_bookmarks(serializer.data.get('bookmarks'))
+
+        serializer_data = CollectionSerializer(instance=collection).data
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer_data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @extend_schema(responses={
+        status.HTTP_200_OK: CollectionSerializer,
+    })
+    @action(["patch"], detail=True)
+    def remove_bookmarks(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        collection = self.get_object()
+        collection.remove_bookmark(serializer.data.get('bookmarks'))
+
+        serializer_data = CollectionSerializer(instance=collection).data
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer_data, status=status.HTTP_201_CREATED, headers=headers)
