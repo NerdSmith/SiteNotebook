@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 
 import opengraph_py3
 
@@ -6,7 +6,7 @@ import opengraph_py3
 class OGPInfoExtractor:
     def __init__(self, url) -> None:
         self.target_url = url
-        self.site_data = None
+        self.site_data: Union[None, Dict[str, str]] = None
 
     def extract(self) -> None:
         self.site_data = opengraph_py3.OpenGraph(url=self.target_url, scrape=True)
