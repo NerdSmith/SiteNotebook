@@ -1,6 +1,19 @@
 version: '3.7'
 
 services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:4000
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    expose:
+      - 4000
+    env_file:
+      - ./.env
+    depends_on:
+      - db
   db:
     image: postgres:13.0-alpine
     ports:
@@ -9,7 +22,15 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.db
-
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    ports:
+      - 4000:80
+    depends_on:
+      - web
 
 volumes:
   postgres_data:
+  static_volume:
