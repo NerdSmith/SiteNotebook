@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from bookmarks.models import Bookmark
+from bookmarks.models import Bookmark, Collection
 
 
 class BookmarkUrlSerializer(serializers.Serializer):
@@ -12,3 +12,5 @@ class BookmarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bookmark
         fields = "__all__"
+        read_only_fields = ("owner", "link_type", "link")
+
