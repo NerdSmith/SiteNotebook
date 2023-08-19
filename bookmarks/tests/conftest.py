@@ -1,6 +1,6 @@
 import pytest
 
-from bookmarks.models import Bookmark, LinkType
+from bookmarks.models import Bookmark, LinkType, Collection
 from user_auth.tests.conftest import user_client, api_client, user, email, password
 
 @pytest.fixture
@@ -42,4 +42,21 @@ def bookmark(user):
         image="https://icdn.lenta.ru/images/2023/08/11/16/20230811162921817/share_c9945c4721c04b6ad7e7cd59d40ba9b5"
                  ".jpg",
         link_type=LinkType.objects.get(pk="article")
+    )
+
+
+@pytest.fixture
+def collection_payload():
+    return {
+        "title": "test",
+        "description": "testtest",
+    }
+
+
+@pytest.fixture
+def collection(user):
+    return Collection.objects.create(
+        owner=user,
+        title="test",
+        description="testtest",
     )

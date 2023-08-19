@@ -117,7 +117,7 @@ class CollectionViewSet(ModelViewSet):
 
         serializer_data = CollectionSerializer(instance=collection).data
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer_data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer_data, status=status.HTTP_200_OK, headers=headers)
 
     @extend_schema(responses={
         status.HTTP_200_OK: CollectionSerializer,
@@ -127,8 +127,8 @@ class CollectionViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         collection = self.get_object()
-        collection.remove_bookmark(serializer.data.get('bookmarks'))
+        collection.remove_bookmarks(serializer.data.get('bookmarks'))
 
         serializer_data = CollectionSerializer(instance=collection).data
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer_data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer_data, status=status.HTTP_204_NO_CONTENT, headers=headers)
