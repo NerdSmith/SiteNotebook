@@ -1,5 +1,6 @@
 from djoser.conf import settings
 from djoser.permissions import CurrentUserOrAdmin
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
@@ -7,6 +8,14 @@ from user_auth.models import User
 from user_auth.serializers import MyUserSerializer, MyUserCreateSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(description='Lists all users. Returns only current user for no-admin user.'),
+    create=extend_schema(description='Creates a new user'),
+    retrieve=extend_schema(description='Gets user by id.'),
+    update=extend_schema(description='Updates user by id.'),
+    partial_update=extend_schema(description='Updates user by id. (Partial)'),
+    destroy=extend_schema(description='Deletes user by id.'),
+)
 class UserViewSet(ModelViewSet):
     serializer_class = MyUserSerializer
     queryset = User.objects.all()

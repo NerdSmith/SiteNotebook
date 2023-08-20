@@ -1,5 +1,5 @@
 from django.db.models import Q, QuerySet
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -13,14 +13,24 @@ from bookmarks.serializers import BookmarkSerializer, BookmarkUrlSerializer, Col
     BookmarkCreateSerializer, CollectionCreateSerializer, BookmarkToCollectionSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(description='Lists all bookmarks of current user. (All for Admin)'),
+    create=extend_schema(description='Creates a new bookmark by url. If the user has the same url, then the bookmark '
+                                     'is updated.'),
+    retrieve=extend_schema(description='Gets bookmark by id.'),
+    update=extend_schema(description='Updates bookmark by id.'),
+    partial_update=extend_schema(description='Updates bookmark by id. (Partial)'),
+    destroy=extend_schema(description='Deletes bookmark by id.'),
+)
 class BookmarkViewSet(ModelViewSet):
     serializer_class = BookmarkSerializer
     queryset = Bookmark.objects.all()
     permission_classes = [IsOwnerOrAdmin]
 
-    @extend_schema(responses={
-        status.HTTP_201_CREATED: BookmarkCreateSerializer,
-    })
+    @extend_schema(
+        responses={
+            status.HTTP_201_CREATED: BookmarkCreateSerializer,
+        })
     def create(self, request, *args, **kwargs):
         user = request.user
         serializer = self.get_serializer(data=request.data)
@@ -73,6 +83,14 @@ class BookmarkViewSet(ModelViewSet):
         return super().get_serializer_class()
 
 
+@extend_schema_view(
+    list=extend_schema(description='Lists all collections of current user. (All for Admin)'),
+    create=extend_schema(description='Creates a new collection by title and description.'),
+    retrieve=extend_schema(description='Gets collection by id.'),
+    update=extend_schema(description='Updates collection by id.'),
+    partial_update=extend_schema(description='Updates collection by id. (Partial)'),
+    destroy=extend_schema(description='Deletes collection by id.'),
+)
 class CollectionViewSet(ModelViewSet):
     serializer_class = CollectionSerializer
     queryset = Collection.objects.all()
@@ -105,9 +123,11 @@ class CollectionViewSet(ModelViewSet):
             self.serializer_class = BookmarkToCollectionSerializer
         return super().get_serializer_class()
 
-    @extend_schema(responses={
-        status.HTTP_200_OK: CollectionSerializer,
-    })
+    @extend_schema(
+        description="Adds bookmarks to collection by id.",
+        responses={
+            status.HTTP_200_OK: CollectionSerializer,
+        })
     @action(["patch"], detail=True)
     def add_bookmarks(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -119,9 +139,11 @@ class CollectionViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer_data, status=status.HTTP_200_OK, headers=headers)
 
-    @extend_schema(responses={
-        status.HTTP_200_OK: CollectionSerializer,
-    })
+    @extend_schema(
+        description="Removes bookmarks from collection by id.",
+        responses={
+            status.HTTP_200_OK: CollectionSerializer,
+        })
     @action(["patch"], detail=True)
     def remove_bookmarks(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
